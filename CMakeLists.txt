@@ -6,7 +6,7 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 # create project
-project(MyProject)
+project(MonteCarloTreeSearch VERSION 1.0.0 LANGUAGES CXX)
 
 # set where the compiled files goes
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/libs)
@@ -34,6 +34,7 @@ include(external/sdl.cmake)
 include(external/imgui.cmake)
 
 # add executable
+add_executable(terminal terminal.cpp Board.cpp MCTS.cpp)
 add_executable(demo main.cpp)
 
 find_package(OpenGL REQUIRED)
