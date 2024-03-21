@@ -1,4 +1,4 @@
-# SDL2-CPM-CMake-Example
+# Monte Carlo Tree Search Visualizer for Tic Tac Toe in C++ with SDL2 ImGUI
 
 ## Summary
 Example on how to import SDL2 via CPM (CMake Package Manager) into a CMake project.

@@ -35,13 +35,10 @@ include(external/imgui.cmake)
 
 # add executable
 add_executable(demo main.cpp)
-add_executable(demo2 main2.cpp)
 
 find_package(OpenGL REQUIRED)
 if(EMSCRIPTEN)
     target_link_libraries(demo  PUBLIC SDL2        SDL2_image IMGUI)
-    target_link_libraries(demo2 PUBLIC SDL2        ${OPENGL_gl_LIBRARY} ${CMAKE_DL_LIBS} SDL2_image IMGUI)
 ELSE()
     target_link_libraries(demo  PUBLIC SDL2-static SDL2_image IMGUI)
-    target_link_libraries(demo2 PUBLIC SDL2-static ${OPENGL_gl_LIBRARY} ${CMAKE_DL_LIBS} SDL2_image IMGUI glew)
 ENDIF()
