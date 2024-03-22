@@ -35,7 +35,7 @@ include(external/imgui.cmake)
 
 # add executable
 add_executable(terminal terminal.cpp Board.cpp MCTS.cpp)
-add_executable(demo main.cpp)
+add_executable(demo main.cpp Board.cpp MCTS.cpp)
 
 find_package(OpenGL REQUIRED)
 if(EMSCRIPTEN)

@@ -81,10 +81,12 @@ void MCTS::backpropagation(Node *node, int result) {
     it = it->parent;
   }
 }
-Board MCTS::search(Board board) {
+Board MCTS::search(Board board, int iterations) {
   delete root;
+  if(iterations==0)
+    iterations = max_iterations;
   root = new Node(board, nullptr);
-  for (int i = 0; i < max_iterations; i++) {
+  for (int i = 0; i < iterations; i++) {
     Node* node = selection(root);
     node = expansion(node);
     int result = simulation(node);
@@ -100,6 +102,12 @@ Board MCTS::search(Board board) {
     }
   }
   return best->board;
+}
+
+Board* MCTS::current_board() const {
+  if(root == nullptr)
+    return nullptr;
+  return &root->board;
 }
 
 Node::~Node() {

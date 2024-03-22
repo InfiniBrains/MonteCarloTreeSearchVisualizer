@@ -37,7 +37,8 @@ public:
   ~MCTS(){
     delete root;
   }
-  Board search(Board board);
+  Board search(Board board, int iterations=0);
+  Board* current_board() const;
 };
 
 

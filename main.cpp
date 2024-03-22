@@ -24,6 +24,30 @@ return canvas.height;
 });
 #endif
 
+#include "MCTS.h"
+
+// draw on IMGUI the board
+void draw_board(Node* node, int depth) {
+  ImGui::Text("UCT: %.3f", node->uct());
+  ImGui::Text("wins, visits: %d/%d", node->wins, node->visits);
+  if(ImGui::BeginTable("table1", 3, ImGuiTableFlags_Borders, ImVec2(50, 50))){
+    for(int i=0; i<3; i++){
+      ImGui::TableNextRow();
+      for(int j=0; j<3; j++){
+        ImGui::TableNextColumn();
+        if(node->board.get_square(i, j)==Square::X){
+          ImGui::Text("X");
+        } else if(node->board.get_square(i, j)==Square::O){
+          ImGui::Text("O");
+        } else {
+          ImGui::Text(".");
+        }
+      }
+    }
+    ImGui::EndTable();
+  }
+}
+
 int main(int argc, char* argv[]) {
     // Unused argc, argv
     (void) argc;
@@ -93,23 +117,11 @@ int main(int argc, char* argv[]) {
     //IM_ASSERT(font != NULL);
 
     // Our state
-    bool show_demo_window = true;
-    bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    MCTS mcts = MCTS(1000);
 
     // Main loop
     bool done = false;
-
-    // Declare rect of square
-    SDL_Rect squareRect;
-
-    // Square dimensions: Half of the min(SCREEN_WIDTH, SCREEN_HEIGHT)
-    squareRect.w = std::min(width, height) / 2;
-    squareRect.h = std::min(width, height) / 2;
-
-    // Square position: In the middle of the screen
-    squareRect.x = width / 2 - squareRect.w / 2;
-    squareRect.y = height / 2 - squareRect.h / 2;
 
     // Event loop
     while (!done) {
@@ -134,42 +146,12 @@ int main(int argc, char* argv[]) {
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
-        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-        if (show_demo_window)
-            ImGui::ShowDemoWindow(&show_demo_window);
-
-        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-        {
-            static float f = 0.0f;
-            static int counter = 0;
-
-            ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-            ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-            ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-            ImGui::Checkbox("Another Window", &show_another_window);
-
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-            ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-            if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-                counter++;
-            ImGui::SameLine();
-            ImGui::Text("counter = %d", counter);
+            ImGui::Begin("Tic Tac Toe");
+            Node node = Node(Board(), nullptr);
+            draw_board(&node, 0);
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
             ImGui::End();
-        }
-
-        // 3. Show another simple window.
-        if (show_another_window)
-        {
-            ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-            ImGui::Text("Hello from another window!");
-            if (ImGui::Button("Close Me"))
-                show_another_window = false;
-            ImGui::End();
-        }
 
 
         // Rendering
@@ -181,8 +163,6 @@ int main(int argc, char* argv[]) {
         // todo: add your game logic here to be drawn before the ui rendering
         // Set renderer color red to draw the square
         SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
-        // Draw filled square
-        SDL_RenderFillRect(renderer, &squareRect);
 
         // present ui on top of your drawings
         ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
